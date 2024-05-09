@@ -1,0 +1,17 @@
+{
+    "name": "pccli/discord",
+    "autoload": {
+        "psr-4": {
+            "Pccli\\Discord\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "chrisfsq",
+            "email": "christianfsq@gmail.com"
+        }
+    ],
+    "require": {
+        "team-reflex/discord-php": "^7.3"
+    }
+}
