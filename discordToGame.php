@@ -13,7 +13,7 @@ use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
 
 $discord = new Discord([
-    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.GwPPM8.vKPFay93rtdM9CStizc0y9pFbY7JxEglWypVmA',
+    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU',
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 

@@ -33,7 +33,7 @@ $config['mysql'] = array(
 
 $config['discord'] = array(
     "channel_id" => "1156628545435615335",
-    "token" => "MTIzNjQxMTk5MTc0MDkwNzY5Mg.GgQPfd.CFMIAL3-JLA2w0OlRxFg85_AyQvuGD49jgnPwE",
+    "token" => "MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU",
     "webhook_url" => "https://discord.com/api/webhooks/1236782017044283554/mMYnK6ioTW_eiNyoMiB5_C1CBYOLymK61arKYKEz-gvJD7C62swZ6v5N3eT4VoXKMDlz"
 );
 

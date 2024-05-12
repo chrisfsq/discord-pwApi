@@ -12,7 +12,7 @@ use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
 
 $discord = new Discord([
-    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.GwPPM8.vKPFay93rtdM9CStizc0y9pFbY7JxEglWypVmA',
+    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU',
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 
@@ -42,7 +42,33 @@ $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord
             // Mensagem de erro se o comando estiver mal formatado
             $message->channel->sendMessage('Formato incorreto. Use !fulltitle id_personagem');
         }
+    } elseif (substr($message->content, 0, 10) === '!listroles') {
+        // Divide a mensagem em partes para obter os parâmetros
+        $parametros = explode(' ', $message->content);
+        
+        // Verifica se o comando tem o formato correto
+        if (count($parametros) == 2) {
+            $account_id = $parametros[1];
+            list($roles_for_account, $role_id) = getRolesForAccount($account_id); // Obtém os nomes dos papéis e as classes associadas
+            
+            if (!empty($roles_for_account)) {
+                // Monta a mensagem com a lista de papéis e suas classes associadas
+                $mensagem = "Personagens associadas à conta " . $account_id . ":\n";
+                for ($i = 0; $i < count($roles_for_account); $i++) {
+                    $mensagem .= $roles_for_account[$i] . " ( ID: " . $role_id[$i] . ")\n";
+                }
+                // Envia a mensagem de volta para o chat do Discord
+                $message->channel->sendMessage($mensagem);
+            } else {
+                // Envia uma mensagem de erro se nenhum papel for encontrado
+                $message->channel->sendMessage("Nenhum papel encontrado para a conta " . $account_id . ".");
+            }
+        } else {
+            // Mensagem de erro se o comando estiver mal formatado
+            $message->channel->sendMessage('Formato incorreto. Use !listroles $account_id');
+        }
     }
+    
 });
 
 function resetBank($id_personagem)
@@ -74,6 +100,18 @@ function fullTitle($id_personagem)
             echo 'system error';
         }
     }
+}
+
+function getRolesForAccount($account_id)
+{
+    global $api;
+    $roles = $api->getRoles($account_id);
+    $role_names = array();
+    foreach ($roles['roles'] as $role) {
+        $role_names[] = $role['name'];
+        $role_id[] = $role['id'];
+    }
+    return array($role_names, $role_id); // Retorna um array contendo os nomes dos papéis e as classes associadas
 }
 
 $discord->run();
