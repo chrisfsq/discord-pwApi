@@ -4,6 +4,9 @@ require __DIR__ . '/vendor/autoload.php';
 require_once('PwAPI.php');
 require('config.php');
 
+$api = new API();
+
+
 use Discord\Discord;
 use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
@@ -16,8 +19,8 @@ $dbPass = 'migHyMPrd76v';
 
 // Função para conectar ao MySQL
 function conectarMySQL() {
-    global $dbHost, $dbUser, $dbPass, $dbName;
-    $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
+    global $config;
+    $conn = mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['db']);
 
     // Verifica se a conexão foi bem-sucedida
     if (!$conn) {
@@ -50,58 +53,64 @@ function executarConsulta($sql) {
     return $result;
 }
 
-// Criação do cliente Discord
 $discord = new Discord([
     'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU',
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 
-// Evento para lidar com a criação de mensagens
 $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) {
-    global $conn;
-
+    
     $channel = $message->channel;
     $author = $message->author;
     $discordUserId = $author->id;
-
-    // Verifica se o usuário está vinculado
+    $account_id = getAccountId($discordUserId);
+    
     if (!isUserLinked($discordUserId)) {
         return;
     }
 
     // Verifica se o item específico está no inventário do personagem principal
     $itemId = 11208; // ID do item a ser verificado
-    if (!itemExistsInRoleInventory($discordUserId, $itemId)) {
+    if (!itemExistsInRoleInventory($account_id, $itemId)) {
         $channel->sendMessage("O item com ID $itemId não está presente no inventário do PERSONAGEM PRINCIPAL.");
         return;
     }
 
     // Verifica se a mensagem é do canal específico que você quer monitorar
+    
     if ($message->channel_id == '1237088317284028548') {
         // Processa a mensagem conforme necessário
         $conteudo = $message->content;
+
+        // Obtém o nome do autor da mensagem
         $nome = $message->author->username;
 
-        // Envia os dados para a API
+        $discordUserId = $author->id;
+        // Envia os dados para a sua API
         enviarParaAPI($conteudo, $nome);
     }
 });
 
-// Função para enviar dados para a API
-function enviarParaAPI($conteudo, $nome) {
-    global $api, $config;
+function enviarParaAPI($conteudo, $nome)
+{
+    global $api;
+    global $config;
 
     if (strpos($conteudo, '<:global:1237095759325827243>') === false) {
+        
         $mensagem = "{cor-1}[Discord]$nome: {cor-4} $conteudo";
+
         $mensagem = cores($mensagem);
+
         $api->pwchat(0, $mensagem, $config['discordchanel']);
+
     } else {
         echo "Mensagem contém conteúdo a ser ignorado: $conteudo\n";
     }
-}
+};
 
-// Função para verificar se o usuário está vinculado
-function isUserLinked($discordUserId) {
+function isUserLinked($discordUserId)
+{
     global $conn;
     $query = "SELECT ID FROM users WHERE discord_id = ?";
     $stmt = mysqli_prepare($conn, $query);
@@ -111,8 +120,8 @@ function isUserLinked($discordUserId) {
     return mysqli_fetch_assoc($result) !== null;
 }
 
-// Função para obter o ID da conta
-function getAccountId($discordUserId) {
+function getAccountId($discordUserId)
+{
     global $conn;
     $query = "SELECT ID FROM users WHERE discord_id = ?";
     $stmt = mysqli_prepare($conn, $query);
@@ -123,17 +132,21 @@ function getAccountId($discordUserId) {
     return $user ? $user['ID'] : null;
 }
 
-// Função para verificar se o item está no inventário do personagem
-function itemExistsInRoleInventory($roleId, $itemId) {
+function itemExistsInRoleInventory($roleId, $itemId)
+{
     global $api;
+    // Obtém o inventário do personagem pelo ID do papel (role)
     $roleInventory = $api->getRoleInventory($roleId);
+
+    // Verifica se o item com o ID específico está presente no inventário
     foreach ($roleInventory['inv'] as $item) {
-        if ($item['id'] === $itemId) {
+        if ($item['id'] === $itemId) { // ID do item desejado
             return true;
         }
     }
+
     return false;
 }
 
-// Execução do cliente Discord
+
 $discord->run();
