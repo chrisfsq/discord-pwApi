@@ -7,7 +7,9 @@ function getRolesForAccount($account_id)
     $api = new API();
     $roles = $api->getRoles($account_id);
     $role_names = array();
-    $role_classes = array(); // Inicializa um array para armazenar os nomes das classes
+    $role_inventario = array(); // Inicializa um array para armazenar os nomes das classes
+
+
 
     // Itera sobre os papéis para obter seus nomes e classes associadas
     foreach ($roles['roles'] as $role) {

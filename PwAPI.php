@@ -937,6 +937,7 @@ class API
     }
 }
 
+
 function classes($classes)
 {
     switch ($classes) {
