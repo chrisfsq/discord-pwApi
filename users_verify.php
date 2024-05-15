@@ -1,15 +1,11 @@
 <?php
 
-$dbHost = 'localhost';
-$dbName = 'pw'; 
-$dbUser = 'admin'; 
-$dbPass = 'migHyMPrd76v'; 
+require('./configs/config.php');
 
 // Função para conectar ao MySQL
 function conectarMySQL() {
-    global $dbHost, $dbUser, $dbPass, $dbName;
-    $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
-
+    global $config;
+    $conn = mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['db']);
     // Verifica se a conexão foi bem-sucedida
     if (!$conn) {
         die("Erro ao conectar ao banco de dados: " . mysqli_connect_error());
@@ -49,11 +45,8 @@ use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
 
-// Token do seu bot do Discord
-$discordToken = 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU';
-
 $discord = new Discord([
-    'token' => $discordToken,
+    'token' => $config['discord']['token'],
 ]);
 
 $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) use (&$userState) {

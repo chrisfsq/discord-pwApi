@@ -1,6 +1,7 @@
 <?php
 
-require_once('PwAPI.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 function sendMessageToDiscordWebhook($webhookUrl, $messageContent)
 {
@@ -36,7 +37,7 @@ function sendMessageToDiscordWebhook($webhookUrl, $messageContent)
 
 
 $api = new API();
-
+global $config;
 $linha = $argv[1];
 
 if (strpos($linha, "rolelogin") !== false) {
@@ -47,7 +48,7 @@ if (strpos($linha, "rolelogin") !== false) {
         $data = date("Y-m-d H:i:s");
 
         $mensagem = "[$data] O jogador **$playerName** entrou no jogo";
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }
 
@@ -59,7 +60,7 @@ if (strpos($linha, "rolelogout") !== false) {
         $data = date("Y-m-d H:i:s");
 
         $mensagem = "[$data] O jogador **$playerName** saiu do jogo";
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }
 
@@ -75,7 +76,7 @@ if (strpos($linha, "createrole-success") !== false) {
         $mensagem = "[$data] O jogador **$playerName** iniciou sua aventura no *Perfect World Supimpa* com a classe *$playerClass*, bem vindo!";
 
         // Envia a mensagem para o webhook do Discord
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }
 
@@ -89,7 +90,7 @@ if (strpos($linha, "faction:type=create") !== false) {
         $data = date("Y-m-d H:i:s");
 
         $mensagem = "[$data] O jogador **$playerName** criou a guilda **$guildName**";
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }
 
@@ -106,6 +107,6 @@ if (strpos($linha, "upgrade") !== false) {
         $data = date("Y-m-d H:i:s");
 
         $mensagem = "[$data] O jogador **$playerName** atingiu o nível *$role_level* como *$playerClass*";
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }

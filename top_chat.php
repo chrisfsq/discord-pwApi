@@ -5,9 +5,8 @@ require __DIR__ . '/vendor/autoload.php';
 use Discord\Discord;
 use Discord\Parts\Channel\Message;
 
-// Configurações do seu bot
-require('config.php');
-require_once('PwAPI.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 $api = new API();
 

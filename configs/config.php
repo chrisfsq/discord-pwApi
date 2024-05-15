@@ -3,8 +3,6 @@
 $config['gmID'] = "1074"; 
 $config['gmNick'] = "Chupacu";
 $config['serverversion'] = "151";
-$config['bonusType'] = "gold"; //change to "gold" for sendmail bonus cash
-$config['pdpBonus'] = "5"; //Quantidade de pontos que vai converter para premio
 $config['money'] = "10";
 $config['item'] = array(
     'id' => "12979",
@@ -19,10 +17,6 @@ $config['item'] = array(
     'mask' => "0"
 );
 
-$config['status']['title_data'] = "8405cc0000000e050d058c050f05150516051705180519051a051b051c051d0583051e051f05200521052205230524052505840526052705280529052a052b052c052d052e052f0530053105320533053405350536053705380539053a053b053c053d053e053f054005410542054305850544058705450546054705480549054a0586054b054c054d054e054f058805500551055205530554055505560557055805590589055a055b055c055d055e055f0560056105620563056405650566056705680569056a056b056c056d056e056f05700571057205730574057505760577058b0578058a0579057a057b057c057d057e057f058005810582058d058e058f051106140615061606170618061d0629062b063e06610662066306640666066706680669066a066b066c066d066e066f067006710672067306740675067606770678067a067b067c067d067e067f0680068106820683068406850686068706880689068a068b068c068d068e068f06900691069206930694069b069c069f06a006a106a206a306a406a506a606a706a806a906aa06ab06ac06ad06ae0600000000";
-
-
-
 //MYSQL CONFIGS
 $config['mysql'] = array(
     "host" => "localhost",
@@ -34,7 +28,7 @@ $config['mysql'] = array(
 $config['discord'] = array(
     "channel_id" => "1156628545435615335",
     "token" => "MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU",
-    "webhook_url" => "https://discord.com/api/webhooks/1236782017044283554/mMYnK6ioTW_eiNyoMiB5_C1CBYOLymK61arKYKEz-gvJD7C62swZ6v5N3eT4VoXKMDlz"
+    "webhook_url" => "https://discord.com/api/webhooks/1237159935629066323/OtKzJlDC8JUoxpCI88lr96ImlhwjtEtB9r5RLRJsvUUYYA1EygOnnUJrIHuD8BR1GA_k"
 );
 
 //SERVER CONNECTION CONFIGS
@@ -46,14 +40,12 @@ $config['ports'] = [
     "gacd" => 29300,
 ];
 
-
 $config['chanel'] = 9;
 $config['discordchanel'] = 1;
 $config['goldBonus'] = 10000;
 $config['proxy_ips'] = '';
-
-
-
+$config['item_chat'] = 11208;
+$config['item_cmd'] = 11208;
 
 //PROTOCOL SETTINGS, DO NOT CHANGE.
 $config['s_block'] = false;

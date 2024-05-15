@@ -1,6 +1,6 @@
 <?php
 
-require('config.php');
+require('./configs/config.php');
 
 class Gamed
 {

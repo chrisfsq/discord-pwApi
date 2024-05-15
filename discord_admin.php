@@ -1,8 +1,8 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require_once('PwAPI.php');
-require('config.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 $api = new API();
 
@@ -11,14 +11,9 @@ use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
 
-$dbHost = 'localhost';
-$dbName = 'pw'; 
-$dbUser = 'admin'; 
-$dbPass = 'migHyMPrd76v'; 
-
 function conectarMySQL() {
-    global $dbHost, $dbUser, $dbPass, $dbName;
-    $conn = mysqli_connect($dbHost, $dbUser, $dbPass, $dbName);
+    global $config;
+    $conn = mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['db']);
 
     if (!$conn) {
         die("Erro ao conectar ao banco de dados: " . mysqli_connect_error());
@@ -26,7 +21,6 @@ function conectarMySQL() {
 
     return $conn;
 }
-
 
 $conn = conectarMySQL();
 
@@ -47,7 +41,7 @@ function executarConsulta($sql) {
 }
 
 $discord = new Discord([
-    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU',
+    'token' => $config['discord']['token'],
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 

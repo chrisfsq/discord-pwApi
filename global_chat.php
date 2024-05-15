@@ -1,7 +1,7 @@
 <?php
 
-require_once('PwAPI.php');
-
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 $api = new API();
 
 function sendMessageToDiscordWebhook($webhookUrl, $messageContent)
@@ -42,7 +42,7 @@ $argv[1]($argv[2]);
 function processChatLine($line = null)
 {
 
-    global $api;
+    global $api, $config;
 
     if (strpos($line, "chl=1") !== false) {
         preg_match('/src=(\d+)/', $line, $matches);
@@ -60,6 +60,6 @@ function processChatLine($line = null)
         
         $mensagem = iconv($msg_enconding, 'UTF-8', "[$hora_atual] <:global:1237095759325827243> - **{$roleId['name']}** $classeEmote disse: $msg");
 
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1237088357968908380/Zu_j3-E4T6PB4SRnyy5y4l1S2m71er90AEousnzzAqidbrwpL-Gp2bZxR5awuECeRovj', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }

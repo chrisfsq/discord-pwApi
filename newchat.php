@@ -1,21 +1,15 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require_once('PwAPI.php');
-require('config.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 $api = new API();
-
 
 use Discord\Discord;
 use Discord\WebSockets\Intents;
 use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
-
-$dbHost = 'localhost';
-$dbName = 'pw'; 
-$dbUser = 'admin'; 
-$dbPass = 'migHyMPrd76v'; 
 
 // Função para conectar ao MySQL
 function conectarMySQL() {
@@ -54,12 +48,12 @@ function executarConsulta($sql) {
 }
 
 $discord = new Discord([
-    'token' => 'MTIzNjQxMTk5MTc0MDkwNzY5Mg.G4OxCb.1qWiqMSqSWkpqDHAUdxIAYTrOcsdfIM0v7b3CU',
+    'token' => $config['discord']['token'],
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 
 $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) {
-    
+    global $config;
     $channel = $message->channel;
     $author = $message->author;
     $discordUserId = $author->id;
@@ -70,7 +64,7 @@ $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord
     }
 
     // Verifica se o item específico está no inventário do personagem principal
-    $itemId = 11208; // ID do item a ser verificado
+    $itemId = $config['item_chat']; // ID do item a ser verificado
     if (!itemExistsInRoleInventory($account_id, $itemId)) {
         $channel->sendMessage("O item com ID $itemId não está presente no inventário do PERSONAGEM PRINCIPAL.");
         return;

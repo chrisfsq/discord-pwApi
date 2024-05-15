@@ -1,6 +1,7 @@
 <?php
 
-require_once('PwAPI.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 $api = new API();
 
@@ -40,6 +41,7 @@ function sendMessageToDiscordWebhook($webhookUrl, $messageContent)
 $argv[1]($argv[2]);
 
 function processLogLine($line = null) {
+    global $config;
     if (strpos($line, "type=2") !== false or strpos($line, "type=258") !== false){
         global $api;
         $attacker = explode("=", explode(":", $line)[8])[1];
@@ -54,7 +56,7 @@ function processLogLine($line = null) {
 
         $mensagem = ":crossed_swords: - **{$attackerRole['name']}** $classeStringKill matou **{$attackedRole['name']}** $classeStringDead";
 
-        sendMessageToDiscordWebhook('https://discord.com/api/webhooks/1236782017044283554/mMYnK6ioTW_eiNyoMiB5_C1CBYOLymK61arKYKEz-gvJD7C62swZ6v5N3eT4VoXKMDlz', $mensagem);
+        sendMessageToDiscordWebhook($config['discord']['webhook_url'], $mensagem);
     }
 }
 

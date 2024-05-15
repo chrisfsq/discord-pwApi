@@ -1,11 +1,10 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-require_once('PwAPI.php');
-require('config.php');
+require_once('./api/PwAPI.php');
+require('./configs/config.php');
 
 $api = new API();
-
 
 use Discord\Discord;
 use Discord\WebSockets\Intents;
