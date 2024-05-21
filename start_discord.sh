@@ -14,9 +14,22 @@ monitorar_global() {
     done
 }
 
+user_verify() {
+    echo -e "\e[1;35mIniciando users_verify, aguarde\e[1;32m[...]\e[0m" 
+        php users_verify.php >> logs/users_verify.log
+}
 
-monitorar_global & monitorar_system
+global() {
+    echo -e "\e[1;35mIniciando discord to game, aguarde\e[1;32m[...]\e[0m"
+        php newchat.php >> logs/newchat.log
+}
 
+admin() {
+    echo -e "\e[1;35mIniciando discord admin, aguarde\e[1;32m[...]\e[0m"
+        php discord_admin.php >> logs/discord_admin.log
+}
+
+monitorar_global & monitorar_system & global & admin & user_verify
 
 
 wait

@@ -15,6 +15,7 @@ use Discord\Parts\Channel\Message;
 function conectarMySQL() {
     global $config;
     $conn = mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['db']);
+    mysqli_options($conn, MYSQLI_OPT_CONNECT_TIMEOUT, 28800); // Define o timeout para 8 horas
 
     // Verifica se a conexão foi bem-sucedida
     if (!$conn) {
@@ -31,20 +32,55 @@ $conn = conectarMySQL();
 function executarConsulta($sql) {
     global $conn;
 
-    // Verifica se a conexão está ativa, se não, reconecta
-    if (!mysqli_ping($conn)) {
-        $conn = conectarMySQL();
+    // Número máximo de tentativas de reconexão
+    $maxTentativas = 3;
+    $tentativa = 0;
+
+    do {
+        // Verifica se a conexão está ativa, se não, reconecta
+        if (!mysqli_ping($conn)) {
+            $conn = conectarMySQL();
+        }
+
+        // Executa a consulta SQL
+        $result = mysqli_query($conn, $sql);
+        
+        // Se a consulta foi bem-sucedida, retorna o resultado
+        if ($result !== false) {
+            return $result;
+        }
+        
+        // Se a consulta falhou, tenta reconectar e executar novamente
+        $tentativa++;
+    } while ($tentativa < $maxTentativas);
+
+    // Se todas as tentativas falharem, emite um erro
+    die("Erro na consulta após $maxTentativas tentativas: " . mysqli_error($conn));
+}
+
+// Função para periodicamente verificar a conexão
+function manterConexaoAtiva() {
+    global $conn;
+
+    // Verifica a cada 30 minutos (1800 segundos)
+    $intervalo = 1800;
+    while (true) {
+        sleep($intervalo);
+        if (!mysqli_ping($conn)) {
+            $conn = conectarMySQL();
+        }
     }
+}
 
-    // Executa a consulta SQL
-    $result = mysqli_query($conn, $sql);
-
-    // Verifica se ocorreu algum erro na execução da consulta
-    if (!$result) {
-        die("Erro na consulta: " . mysqli_error($conn));
+// Inicia uma thread para manter a conexão ativa
+if (function_exists('pcntl_fork')) {
+    $pid = pcntl_fork();
+    if ($pid == -1) {
+        die('Erro ao criar o processo filho');
+    } elseif ($pid == 0) {
+        manterConexaoAtiva();
+        exit(0);
     }
-
-    return $result;
 }
 
 $discord = new Discord([
@@ -52,7 +88,9 @@ $discord = new Discord([
     'intents' => Intents::getDefaultIntents() | Intents::GUILD_MESSAGES,
 ]);
 
-$discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) {
+$ultimaMensagem = [];
+
+$discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord) use (&$ultimaMensagem) {
     global $config;
     $channel = $message->channel;
     $author = $message->author;
@@ -63,23 +101,32 @@ $discord->on(Event::MESSAGE_CREATE, function (Message $message, Discord $discord
         return;
     }
 
-    // Verifica se o item específico está no inventário do personagem principal
-    $itemId = $config['item_chat']; // ID do item a ser verificado
-    if (!itemExistsInRoleInventory($account_id, $itemId)) {
-        $channel->sendMessage("O item com ID $itemId não está presente no inventário do PERSONAGEM PRINCIPAL.");
-        return;
-    }
-
     // Verifica se a mensagem é do canal específico que você quer monitorar
-    
     if ($message->channel_id == '1237088317284028548') {
+        // Verifica se o item específico está no inventário do personagem principal
+        $itemId = $config['item_chat'];
+        $itemName = $config['item_chat_name'];
+        if (!itemExistsInRoleInventory($account_id, $itemId)) {
+            $author->sendMessage("O item **$itemId - $itemName** não está presente no inventário, é necessário possuir este item no inventário do seu **personagem principal (Primeiro personagem criado na conta)**, para poder enviar mensagem.");
+            return;
+        }
+
+        // Verifica se o intervalo necessário já passou
+        $intervalo = 10; // Intervalo em segundos
+        if (isset($ultimaMensagem[$discordUserId]) && time() - $ultimaMensagem[$discordUserId] < $intervalo) {
+            $author->sendMessage("Por favor, aguarde $intervalo segundos entre cada mensagem.");
+            return;
+        }
+
+        // Atualiza a hora da última mensagem
+        $ultimaMensagem[$discordUserId] = time();
+
         // Processa a mensagem conforme necessário
         $conteudo = $message->content;
 
         // Obtém o nome do autor da mensagem
         $nome = $message->author->username;
 
-        $discordUserId = $author->id;
         // Envia os dados para a sua API
         enviarParaAPI($conteudo, $nome);
     }

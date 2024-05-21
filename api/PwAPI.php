@@ -931,6 +931,7 @@ class API
         $skills = $this->gamed->reverseOctet($this->gamed->hex2octet($count)) . $skills;
         return $skills;
     }
+    
     public function serverOnline()
     {
         return (@fsockopen('127.0.0.1', $this->config['ports']['gamedbd'], $errCode, $errStr, 1) ? TRUE : FALSE);

@@ -44,8 +44,14 @@ $config['chanel'] = 9;
 $config['discordchanel'] = 1;
 $config['goldBonus'] = 10000;
 $config['proxy_ips'] = '';
+
+#ITEM PARA MENSAGEM
 $config['item_chat'] = 11208;
+$config['item_chat_name'] = "Pedra Imortal";
+
+#ITEM PARA COMANDOS
 $config['item_cmd'] = 11208;
+$config['item_cmd_name'] = "Pedra Imortal";
 
 //PROTOCOL SETTINGS, DO NOT CHANGE.
 $config['s_block'] = false;
